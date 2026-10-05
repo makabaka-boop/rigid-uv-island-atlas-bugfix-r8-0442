@@ -5,16 +5,25 @@ import numpy as np
 
 def plane_grid(n=8):
     """Subdivided square in the z=0 plane, oriented +z. A disk already."""
+    return plane_rect(n, n)
+
+
+def plane_rect(nx=3, ny=5):
+    """Rectangular nx-1 by ny-1 cell grid in z=0 (nx columns, ny rows).
+
+    Used by the atlas sample so a wide island can be shown placed with the
+    same common scale as square islands.
+    """
     verts, faces = [], []
-    for i in range(n):
-        for j in range(n):
+    for i in range(nx):
+        for j in range(ny):
             verts.append((i, j, 0.0))
 
     def vid(i, j):
-        return i * n + j
+        return i * ny + j
 
-    for i in range(n - 1):
-        for j in range(n - 1):
+    for i in range(nx - 1):
+        for j in range(ny - 1):
             a, b, c, d = vid(i, j), vid(i + 1, j), vid(i + 1, j + 1), vid(i, j + 1)
             faces.append((a, b, d))
             faces.append((b, c, d))

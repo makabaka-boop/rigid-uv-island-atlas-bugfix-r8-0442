@@ -1,5 +1,21 @@
-<!doctype html><meta charset="utf-8"><title>多岛贴图导出</title>
-<h1>多岛贴图导出</h1><p>输入 islands（每项有独立 id 与原 /api/solve 的 mesh 请求）及 padding。</p>
-<textarea id="request" rows="16" cols="95"></textarea><button id="run">展开并排布</button>
-<svg id="view" viewBox="0 0 500 500" width="500" height="500"></svg><pre id="output"></pre>
+<!doctype html>
+<meta charset="utf-8">
+<title>多岛贴图导出</title>
+<h1>多岛贴图导出</h1>
+<p>
+  输入 islands（每项有独立稳定字符串 <code>id</code> 与原 /api/solve 的
+  <code>mesh</code> 请求）及 <code>padding</code>（归一化边缘与岛间距，
+  必须小于 1/(岛数+1)）。排布只使用一个共用正比例、平移与保向 90° 旋转；
+  返回顺序遵循请求，岛身份跟随各自的原面、面角、原顶点与切缝 UV 顶点。
+</p>
+<p>
+  <button id="loadSample">载入示例请求</button>
+  <textarea id="request" rows="16" cols="100"></textarea>
+  <button id="run">展开并排布</button>
+</p>
+<div id="status"></div>
+<svg id="view" viewBox="0 0 500 500" width="500" height="500"
+     style="background:#fff;border:1px solid #999"></svg>
+<div id="downloads"></div>
+<pre id="output"></pre>
 <script src="/atlas-view.js"></script>
