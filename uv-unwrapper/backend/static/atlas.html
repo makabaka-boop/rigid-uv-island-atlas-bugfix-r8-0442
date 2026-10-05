@@ -1,5 +1,22 @@
 <!doctype html><meta charset="utf-8"><title>多岛贴图导出</title>
-<h1>多岛贴图导出</h1><p>输入 islands（每项有独立 id 与原 /api/solve 的 mesh 请求）及 padding。</p>
-<textarea id="request" rows="16" cols="95"></textarea><button id="run">展开并排布</button>
-<svg id="view" viewBox="0 0 500 500" width="500" height="500"></svg><pre id="output"></pre>
+<h1>多岛贴图导出</h1>
+<p>输入 islands（每项有稳定字符串 id 与原 /api/solve 的 mesh 请求）及 padding。
+布局按 id 稳定排布，返回顺序遵循请求；所有岛共用一个正比例缩放，只做平移与保持方向的 90° 旋转。</p>
+<p>
+  <button id="sample">载入示例请求</button>
+  <button id="run">展开并排布</button>
+  <a id="download" hidden href="#">下载 UV 与身份 (atlas.json)</a>
+  <span id="status"></span>
+</p>
+<textarea id="request" rows="16" cols="95"></textarea>
+<div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap">
+  <svg id="view" viewBox="0 0 500 500" width="500" height="500"
+       style="border:1px solid #888;background:#fafafa"></svg>
+  <div>
+    <h3>岛归属</h3>
+    <ul id="legend"></ul>
+    <p id="pick" style="font-family:monospace;white-space:pre"></p>
+  </div>
+</div>
+<details><summary>返回 JSON</summary><pre id="output" style="max-height:300px;overflow:auto"></pre></details>
 <script src="/atlas-view.js"></script>

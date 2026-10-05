@@ -58,18 +58,36 @@ npm run dev
   成可用贴图；
 - 非法切口：返回见证，拒绝求解。
 
+## 多岛图集（/atlas）
+
+`POST /api/atlas` 接收 1～8 个 `{"id": 稳定字符串, "mesh": 原 /api/solve 请求}`
+及统一 `padding`。保证：
+
+- **一个正比例缩放**作用于全部岛，禁止逐岛缩放，相对尺度不变；
+- 只允许平移与**保持方向的 90° 旋转**（`(u,v)->(-v,u)`，行列式 +1），
+  绝不交换坐标轴（那是行列式 −1 的镜像）；
+- `padding` 同时是外边距和岛间距，要求有限且 `0 <= padding < 1/(n+1)`；
+- 布局带位按稳定 id 排序、可重复，**响应顺序遵循请求**，每岛坐标与
+  face/corner/orig_vertex/uv_vertex/面角身份永远贴自己的 id，切缝拆分出的
+  UV 顶点不按坐标合并；
+- 任一岛输入非法、不是圆盘、秩不足、有翻转/退化面或非有限坐标时，
+  **整份图集拒绝（400）**，不导出任何部分结果。
+
+`GET /api/atlas/sample` 返回故意乱序的三岛示例请求；页面在 `/atlas`。
+
 ## 后端测试
 
 ```bash
 cd backend
-python3 -m unittest tests.test_pipeline -v
+python3 -m unittest discover -s tests -v
 ```
 
 覆盖：切缝分裂身份（缝两侧扇区独立、相同三维坐标不去重）、锚点约束
 （精确固定 (0,0)/(1,0)、不同锚点、必须在边界）、平面小网格（共形残差≈0、
 相似变换解、无翻转）、非法切口（封闭曲面、多边界环、断开组件、非流形边、
 绕序不一致、退化面、超过 200 面、不存在的切缝边）、立方体可展面展开满秩、
-导出角点行含面/角/UV 身份。
+导出角点行含面/角/UV 身份；以及图集的公共缩放、方向保持、统一间距、
+稳定 id 归属与整批拒绝（见 tests/test_atlas.py）。
 
 ## 文件
 
@@ -78,9 +96,12 @@ backend/
   mesh.py        输入校验 + 并查集扇区分裂
   topology.py    半边边界环追踪、圆盘判定、Tutte 预览
   lscm.py        面积加权 LSCM 系统组装 + SVD 求解 + 残差/翻转/角误差
+  packing.py     多岛图集：公共正比例缩放、保向四分之一旋转、统一间距
   samples.py     平面/立方体/八面体示例
-  app.py         Flask API: /api/samples, /api/prepare, /api/solve
-  tests/         19 个单元测试
+  app.py         Flask API: /api/samples, /api/prepare, /api/solve,
+                 /api/atlas, /api/atlas/sample, /atlas
+  static/        图集页面 /atlas 与其查看/下载脚本
+  tests/         19 个单岛测试 + 22 个图集测试
 frontend/
   src/ThreeView.jsx   三维模型、切缝、棋盘纹理、锚点球
   src/UVView.jsx      二维结果、棋盘、缝边、锚点拾取、面拾取
